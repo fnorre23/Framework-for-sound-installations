@@ -10,6 +10,8 @@ import random
 import time
 import threading  # Add threading for parallel execution
 
+#TODO Lav OSC setup til et modul, og så laver scripts til hver relevant computervision ting i guess - så kan man nemmere navigere de forskellige ting i 1 pakkeløsning
+
 ## initialize pose estimator
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
@@ -41,7 +43,6 @@ def send_to_pd(address):
 
 def talk2pd(ip,port,path,mymove):
     client = udp_client.SimpleUDPClient(ip,port)
-    #print (type(mymove))
     client.send_message(path, mymove)
 
 def main(path: str, *osc_arguments):
@@ -65,7 +66,7 @@ def listen2pd(addrIN,addrOUT):
 
     # server to listen
     server = osc_server.ThreadingOSCUDPServer((ipIN,portIN), disp)
-    print("listening on {}".format(server.server_address))
+    #print("listening on {}".format(server.server_address))
     server.serve_forever()
 
 
@@ -88,37 +89,17 @@ def send_landmarks_pd(landmarks):
             # Adding default value to coordinates not found
             #TODO Find reasonable default value
 
-            osc_message.append(default_value)
-            osc_message.append(default_value)
-            osc_message.append(default_value)
-
-            osc_message = tuple(osc_message)
-            talk2pd(args.ipIN, args.portOUT, address, osc_message)
+            landmark_coords = (default_value, default_value, default_value)
 
             continue
-        
-
-        # Getting landmark data and rounding
-        x = round(landmark.x, 2)
-        y = round(landmark.y, 2)
-        z = round(landmark.z, 2)
 
         # TODO Instead of adding to list and convert to tuple, just declare tuple and send
-        #landmark_coords = (round(landmark.x, 2), round(landmark.y, 2), round(landmark.z, 2))
-
-        # Adding values to list in order - see pose_landmarks.png for more specifics. 
-        # Each point is divided in Pure Data to minimize size of message, since data will always be sent in the same order
-        osc_message.append(x)
-        osc_message.append(y)
-        osc_message.append(z)
+        landmark_coords = (round(landmark.x, 2), round(landmark.y, 2), round(landmark.z, 2))
 
         i += 1
         
-        # Converting to tuple
-        osc_message = tuple(osc_message)
-        
         # Sending OSC message for landmark
-        talk2pd(args.ipIN, args.portOUT, address, osc_message)
+        talk2pd(args.ipIN, args.portOUT, address, landmark_coords)
 
     
     return 0
@@ -189,8 +170,6 @@ while cap.isOpened():
     except Exception as e:
         print(f"Error: {e}")
         break
-        
-
 
 cap.release()
 cv2.destroyAllWindows()
