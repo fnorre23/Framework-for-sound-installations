@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../../Notebooks"
+		},
+		{
+			"name": "Host board",
+			"path": "../../PlatformIO/Projects/Host board"
+		},
+		{
+			"name": "StampS3 Client board",
+			"path": "../../PlatformIO/Projects/StampS3 Client board"
+		},
+		{
+			"name": "Fuck",
+			"path": "../../PlatformIO/Projects/Fuck"
+		}
+	],
+	"settings": {}
+}
