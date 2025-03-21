@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import numpy as np
 
 import argparse
 from pythonosc import dispatcher 
@@ -22,6 +23,9 @@ pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 # set input and output port numbers
 input_port = 5005
 output_port = 5006
+
+# Camera to work with
+cam = 0
 
 ## osc setup
 # Det er sådan her vi sender shit til PD
@@ -92,9 +96,9 @@ def send_landmarks_pd(landmarks):
             landmark_coords = (default_value, default_value, default_value)
 
             continue
+        
 
-        # TODO Instead of adding to list and convert to tuple, just declare tuple and send
-        landmark_coords = (round(landmark.x, 2), round(landmark.y, 2), round(landmark.z, 2))
+        landmark_coords = (round(np.clip(landmark.x, 0, 1), 2)), (round(np.clip(landmark.y, 0, 1), 2)), (round(np.clip(landmark.z, 0, 1), 2))
 
         i += 1
         
@@ -120,6 +124,7 @@ parser.add_argument("-PI", "--portIN", type=int, default=input_port, help="The p
 parser.add_argument("-UI", "--uripathIN", type=str, default="/filter", help="PD's URI path")
 parser.add_argument("-PO", "--portOUT", type=int, default=output_port, help="The port to send messages to")
 parser.add_argument("-UO", "--uripathOUT", type=str, default="/filter", help="output URI path")
+parser.add_argument("-CO", "--camDISP"), type=int, default=cam, help="The camera you use for the script"
 args = parser.parse_args()
 # wrap up inputs
 outputAddress = [args.portOUT, args.uripathOUT]
@@ -135,7 +140,7 @@ server_thread.start()
 # Main
 ###########
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(args.camDISP)
 
 while cap.isOpened():
     # read frame
