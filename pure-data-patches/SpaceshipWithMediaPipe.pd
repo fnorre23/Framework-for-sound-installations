@@ -1,7 +1,7 @@
-#N canvas 577 285 920 503 12;
+#N canvas 577 285 1665 1093 12;
 #X obj 13 13 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X msg 15 52 \; pd dsp \$1;
-#N canvas 561 111 822 596 SFXs 1;
+#N canvas 1325 684 822 596 SFXs 1;
 #N canvas 962 38 880 707 Engine 0;
 #N canvas 514 106 663 715 FMSynth 0;
 #X obj 99 206 vsl 19 162 0 1000 0 0 empty empty empty 0 -9 0 12 #fcfcfc #000000 #000000 0 1;
@@ -876,7 +876,7 @@
 #X restore 221 382 pd SFXs;
 #X text 355 357 inlet 1: engine start sound (50-1000) inlet 2: take off (bang) inlet 3: engine speed (0-100), f 39;
 #X obj 244 352 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
-#N canvas 141 43 368 299 python-receive 1;
+#N canvas 1138 765 368 261 python-receive 0;
 #X obj 42 131 netreceive -u -b;
 #X msg 42 50 listen 0;
 #X msg 54 103 listen 5006;
@@ -893,7 +893,7 @@
 #X connect 6 0 7 0;
 #X connect 7 0 8 0;
 #X restore 285 100 pd python-receive;
-#N canvas 0 38 299 257 landmark19 1;
+#N canvas 0 38 299 181 landmark19 0;
 #X floatatom 67 145 5 0 0 2 x-value - - 0;
 #X floatatom 124 147 5 0 0 2 y-value - - 0;
 #X floatatom 187 151 5 0 0 2 z-value - - 0;
@@ -933,7 +933,7 @@
 #X restore 346 285 pd landmark20;
 #X obj 116 312 * 1000;
 #X obj 116 347 + 50;
-#X obj 390 313 * 100;
+#X obj 390 313 * -100;
 #X connect 0 0 1 0;
 #X connect 4 0 2 1;
 #X connect 5 0 6 0;
