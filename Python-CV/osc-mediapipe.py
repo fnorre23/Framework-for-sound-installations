@@ -115,26 +115,20 @@ def send_landmarks_pd(landmarks):
 #visibility: 0.9696751236915588
 
 
-
 ## parser
 # generate parser
-parser = argparse.ArgumentParser(prog='python_comm', formatter_class=argparse.RawDescriptionHelpFormatter, description='Receive and send OSC messages from pd')
+parser = argparse.ArgumentParser(prog='python_comm', formatter_class=argparse.RawDescriptionHelpFormatter, description='Send OSC messages to pd')
 parser.add_argument("-II","--ipIN", type=str, default="127.0.0.1", help="The ip to listen on")
 parser.add_argument("-PI", "--portIN", type=int, default=input_port, help="The port to listen on")
 parser.add_argument("-UI", "--uripathIN", type=str, default="/filter", help="PD's URI path")
 parser.add_argument("-PO", "--portOUT", type=int, default=output_port, help="The port to send messages to")
 parser.add_argument("-UO", "--uripathOUT", type=str, default="/filter", help="output URI path")
-parser.add_argument("-CO", "--camDISP"), type=int, default=cam, help="The camera you use for the script"
+parser.add_argument("-CO", "--camDISP", type=int, default=cam, help="The camera you use")
 args = parser.parse_args()
 # wrap up inputs
 outputAddress = [args.portOUT, args.uripathOUT]
 inputAddress = [args.ipIN, args.portIN, args.uripathIN]
 
-# Nedenstående skal nok i while loop ift ZED data, men også bare at det skal køre for evigt, for lige nu stopper det efter function4 er færdig
-# Run the OSC server in a separate thread
-server_thread = threading.Thread(target=listen2pd, args=(inputAddress, outputAddress))
-server_thread.daemon = True  # Ensures the thread closes when the script stops
-server_thread.start()
 
 ############
 # Main
