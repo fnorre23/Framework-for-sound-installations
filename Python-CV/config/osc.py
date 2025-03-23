@@ -26,6 +26,7 @@ def send_landmarks_pd(landmarks, label = None):
         else:
             address = f"/landmark{i}"
 
+        # Check if land mark is present - if not, send default value
         if landmark is None:
             print(f'No landmark detected for landmark {i}')
 
@@ -36,7 +37,7 @@ def send_landmarks_pd(landmarks, label = None):
 
             continue
         
-
+        # Rounding values to 2 decimalpoints + clipping so value can't exceed 0 or 1
         landmark_coords = (round(np.clip(landmark.x, 0, 1), 2)), (round(np.clip(landmark.y, 0, 1), 2)), (round(np.clip(landmark.z, 0, 1), 2))
 
         # Sending OSC message for landmark
