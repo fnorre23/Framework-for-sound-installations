@@ -15,6 +15,7 @@ def send_to_pd(path,data):
 def send_landmarks_pd(landmarks, label = None):
 
     i = 0
+    
     default_value = 0
 
     for landmark in landmarks:

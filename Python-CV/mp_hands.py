@@ -24,9 +24,7 @@ def thumb_index_relation(thumb_landmark, index_landmark):
     distance = round(math.dist(thumb_point, index_point), 2)
 
     # Getting midpoint between index and thumb
-    midpoint = [round((thumb_landmark.x + index_landmark.x)/2, 2), round((thumb_landmark.y + index_landmark.y)/2, 2), ]
-    #print(midpoint)
-
+    midpoint = [round((thumb_landmark.x + index_landmark.x)/2, 2), round((thumb_landmark.y + index_landmark.y)/2, 2)]
 
     return distance, midpoint
 
@@ -36,11 +34,14 @@ while cap.isOpened():
     # read frame
     _, frame = cap.read()
 
+    # mirrors frame
     frame = cv2.flip(frame, 1)
 
+    # Press q to quit program
     if cv2.waitKey(1) == ord('q'):
         break
 
+    # Getting window dimensions of output window - used to calculate some lines to draw, as MP returns normalized data  
     cv2.namedWindow("Output", cv2.WINDOW_AUTOSIZE) 
     x, y, window_width, window_height = cv2.getWindowImageRect("Output")
 
@@ -52,12 +53,14 @@ while cap.isOpened():
         hands_results = hand.process(frame_rgb)
         
         # TODO Tænke over om mere end 1 par hænder skal kunne bruges, i så fald skal der også tages højde for index og ikke bare handedness
-        # Check if hands_landmarks is not None
+        # Check if hands_landmarks are present
         if hands_results.multi_hand_landmarks is not None:
 
             midpoints = []
 
             for idx, hand_landmarks in enumerate(hands_results.multi_hand_landmarks):
+
+                # drawing hand
                 mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
                 # Getting left or right hand
@@ -65,9 +68,9 @@ while cap.isOpened():
 
                 # Relationship between thumb and index the distance in 2D #TODO Skal det være 3d?
                 # and the midpoint between the 2. # TODO get the midpoints collect and measure distance between them 2
-
                 t_i_distance, midpoint = thumb_index_relation(hand_landmarks.landmark[4],hand_landmarks.landmark[8])
 
+                # adding midpoint to list
                 midpoints.append(midpoint)
 
                 # Sending landmarks to pd PD
@@ -92,9 +95,6 @@ while cap.isOpened():
                 
                 # Drawing lines between midpoints
                 cv2.line(frame, (int(midpoints[0][0]*window_width), int(midpoints[0][1]*window_height)), (int(midpoints[1][0]*window_width), int(midpoints[1][1]*window_height)), (0,0,255), 5)
-
-
-
 
         # display the frame
         cv2.imshow('Output', frame)
