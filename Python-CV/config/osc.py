@@ -12,16 +12,18 @@ client = udp_client.SimpleUDPClient(args.ipIN, args.portOUT)
 def send_to_pd(path,data):
     client.send_message(path, data)
 
-def send_landmarks_pd(landmarks):
+def send_landmarks_pd(landmarks, label = None):
 
     i = 0
     default_value = 0
 
     for landmark in landmarks:
         
-        osc_message = []
-
-        address = f"/landmark{i}"
+        # If we use label such as handedness, change the address appropriately
+        if label is not None:
+            address = f'/{label}/landmark{i}'
+        else:
+            address = f"/landmark{i}"
 
         if landmark is None:
             print(f'No landmark detected for landmark {i}')
@@ -36,10 +38,9 @@ def send_landmarks_pd(landmarks):
 
         landmark_coords = (round(np.clip(landmark.x, 0, 1), 2)), (round(np.clip(landmark.y, 0, 1), 2)), (round(np.clip(landmark.z, 0, 1), 2))
 
-        i += 1
-        
         # Sending OSC message for landmark
         send_to_pd(address, landmark_coords)
 
+        i += 1
     
     return 0

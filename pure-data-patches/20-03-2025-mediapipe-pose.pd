@@ -668,15 +668,6 @@
 #X text 910 1274 HELPER COMMENT - MAKES PATCH MORE VIEWABLE;
 #X floatatom 547 165 5 0 0 0 - - - 0;
 #X floatatom 550 247 5 0 0 0 - - - 0;
-#N canvas 1447 53 450 300 rout 0;
-#X obj 167 110 inlet;
-#X obj 103 162 route landmark0 landmark1;
-#X listbox 62 231 20 0 0 0 - - - 0;
-#X listbox 229 225 20 0 0 0 - - - 0;
-#X connect 0 0 1 0;
-#X connect 1 0 2 0;
-#X connect 1 1 3 0;
-#X restore 717 171 pd rout test;
 #X connect 14 0 58 0;
 #X connect 32 0 35 0;
 #X connect 32 0 0 0;
@@ -712,6 +703,5 @@
 #X connect 32 0 2 0;
 #X connect 32 0 1 0;
 #X connect 32 0 36 0;
-#X connect 32 0 59 0;
 #X connect 36 0 57 0;
 #X coords 0 -1 1 1 400 1200 1 100 100;
