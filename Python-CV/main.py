@@ -9,7 +9,7 @@ import mp_pose
 args = parser.get_args()
 
 
-cap = cv2.VideoCapture(args.camDISP)
+cap = cv2.VideoCapture(args.cam)
 
 while cap.isOpened():
     # read frame
@@ -27,11 +27,11 @@ while cap.isOpened():
     x, y, window_width, window_height = cv2.getWindowImageRect("Output")
 
     try:
-        # Executing chosen model
 
-        match args.modCHOICE:
+        # Executing chosen model
+        match args.model:
             case "mp_hands":
-                frame = mp_hands.hands_loop(frame, window_width, window_height,)
+                frame = mp_hands.hands_loop(frame, window_width, window_height)
           
             case "mp_pose":
                 frame = mp_pose.pose_loop(frame)
@@ -39,8 +39,9 @@ while cap.isOpened():
             case "ZED":
                 print("Model not implemented. Closing...")
                 break
+
             case _:
-                print("Model choice argument not accepted.")
+                print("Model choice argument not accepted. Closing...")
             
 
         # display the frame
@@ -53,3 +54,6 @@ while cap.isOpened():
 cap.release()
 
 cv2.destroyAllWindows()
+
+
+#TODO Multiple camera setup?

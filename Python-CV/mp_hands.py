@@ -80,5 +80,4 @@ def hands_loop(frame, window_width, window_height):
             # Drawing lines between midpoints
             cv2.line(frame, (int(midpoints[0][0]*window_width), int(midpoints[0][1]*window_height)), (int(midpoints[1][0]*window_width), int(midpoints[1][1]*window_height)), (0,0,255), 5)
         
-        # TODO Andet man skal bruge i main? ik rigtig right, man skal vel bare kunne kalde den?
         return frame

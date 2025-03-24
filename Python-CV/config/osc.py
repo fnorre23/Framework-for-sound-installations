@@ -9,8 +9,8 @@ args = arg.get_args()
 client = udp_client.SimpleUDPClient(args.ipIN, args.portOUT)
 
 ## osc setup
-def send_to_pd(path,data):
-    client.send_message(path, data)
+def send_to_pd(address,data):
+    client.send_message(address, data)
 
 def send_landmarks_pd(landmarks, label = None):
 

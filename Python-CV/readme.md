@@ -26,11 +26,11 @@ You need to install the dependencies from requirements.txt in either a virtual e
 - Camera (Regular webcam works fine for Mediapipe models, but ZED camera is required for ZED models.)
 
 #### Tutorials to pip install:
-NOTE: For all tutorials, once you see how to pip install a library, just replace whatever library with "requirements.txt". This will install required libraries.
+NOTE: For all tutorials, once you learn how to pip install a library, just replace whatever library with "requirements.txt". This will install required libraries.
 
 (Videos)
 
-(Recommended) Setting up a virtual environment (.venv) in Python in Virtual Studio Code : 
+(Recommended) Setting up a virtual environment (.venv) in Python in Virtual Studio Code: 
 https://www.youtube.com/watch?v=GZbeL5AcTgw
 
 Installing Python libraries to the root: 
@@ -46,10 +46,14 @@ With everything set up and installed, we are now ready to run!
 To use the program, run the main.py script, either directly from your editor (Visual Studio Code has a 'play' button as an example), or run it from your terminal.
 If you run it directly it should look something like this:
 
+![Hands being tracked with Mediapipe](images/mp_hands.png)
 
-By default, the program runs with the mp_hands model.
+By default, the program runs with the mp_hands model as displayed in the image above.
 
-If you have the accompanying Pure Data patch open, you should see the values begin to change as you move your hands about
+If you have the accompanying Pure Data patch open, you should see the values begin to change as you move your hands about:
+
+![Hands being tracked with Mediapipe, altering Pure Data values](images/mp_hands_pd.gif)
+
 #### How to change settings
 You might want to change some settings, depending on your setup. These settings can be changed with arguments when running the script from the terminal, or be changed directly in the script if you want a new default. 
 ##### Setting arguments in terminal when running the script
@@ -59,4 +63,18 @@ Possible arguments:
 ##### Changing default settings
 Go the the 'config' folder and choose 'args.py'. Find the settings you want change, and change.
 
+- --ipIN: The IP address of the devices you want to connect
+- --portOUT: The port which the data is sent
+- --cam: The camera you want to use, expressed as an integer. 0 defaults to integrated camera if present.
+- --model: AI tracking model. Possible arguments:
+  - mp_hands
+  - mp_pose
+
 ### How to add functionality
+
+
+## Inspirations:
+- pepepepebrick on Instagram: https://www.instagram.com/p/DCwbZwczaER/
+- danielgomezmarion: https://github.com/danielgomezmarin/
+
+#TODO Insert images and gifs
