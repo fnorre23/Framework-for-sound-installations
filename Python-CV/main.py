@@ -42,6 +42,7 @@ while cap.isOpened():
 
             case _:
                 print("Model choice argument not accepted. Closing...")
+                break
             
 
         # display the frame

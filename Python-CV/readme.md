@@ -70,9 +70,6 @@ Possible arguments:
 ##### Changing default settings
 Go the the 'config' folder and choose 'args.py'. Find the settings you want change, and change.
 
-### How to add functionality
-
-
 ## Inspirations:
 - pepepepebrick on Instagram: https://www.instagram.com/p/DCwbZwczaER/
 - danielgomezmarion: https://github.com/danielgomezmarin/
