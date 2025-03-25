@@ -18,7 +18,7 @@ Not implemented as of yet.
 
 ## Setup
 ### General setup
-You need Python version between 3.9-3.12, as mediapipe only supports these versions as of now. 
+You need Python version between 3.10-3.12, as mediapipe only supports these versions as of now, and due to some code in the program. 
 You need to install the dependencies from requirements.txt in either a virtual environment (.venv OR .conda), or to your root Python.
 
 #### Requirements
@@ -57,18 +57,18 @@ If you have the accompanying Pure Data patch open, you should see the values beg
 #### How to change settings
 You might want to change some settings, depending on your setup. These settings can be changed with arguments when running the script from the terminal, or be changed directly in the script if you want a new default. 
 ##### Setting arguments in terminal when running the script
-Bla bla
+To set the arguments when running the script, follow up the script name with the argument you wish to change, followed by the new argument. You can change any argument that allows it when running the script. E.g. "py main.py --model mp_pose --cam 2". This would change the model of the script, and the camera which is used.
 
 Possible arguments:
-##### Changing default settings
-Go the the 'config' folder and choose 'args.py'. Find the settings you want change, and change.
-
 - --ipIN: The IP address of the devices you want to connect
 - --portOUT: The port which the data is sent
-- --cam: The camera you want to use, expressed as an integer. 0 defaults to integrated camera if present.
+- --cam: The camera you want to use, expressed as an integer. 0 defaults to integrated camera if present, or first registered .
 - --model: AI tracking model. Possible arguments:
   - mp_hands
   - mp_pose
+
+##### Changing default settings
+Go the the 'config' folder and choose 'args.py'. Find the settings you want change, and change.
 
 ### How to add functionality
 

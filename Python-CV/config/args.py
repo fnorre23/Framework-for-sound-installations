@@ -26,7 +26,6 @@ def get_args():
     parser.add_argument("-CAM", "--cam", type=int, default=cam, help="The camera you use")
 
     # model choice arguments
-    #TODO Add model choice for each system (Mediapie pose, mediapipe hands, etc.)
     parser.add_argument("-MOD", "--model", type=str, default=mod_choice, help="The model for tracking. See README or main.py for options")
 
     args = parser.parse_args()
