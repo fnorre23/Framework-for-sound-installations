@@ -18,8 +18,10 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 
 // Structure to receive data
 typedef struct struct_message {
-    int data;
-    float sensordata;
+    int id;
+    float valueX;
+    float valueY;
+
 } struct_message;
 
 
@@ -40,17 +42,21 @@ void SendToPD(float message) {
 
 
 // Callback function when ESP-NOW data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
     memcpy(&myData, incomingData, sizeof(myData));
     Serial.print("Bytes received: ");
     Serial.println(len);
     Serial.print("int: ");
-    Serial.println(myData.data);
+    Serial.println(myData.id);
     Serial.print("float: ");
-    Serial.println(myData.sensordata);
+    Serial.println(myData.valueX);
+    Serial.print("float: ");
+    Serial.println(myData.valueY);
 
     // Send received ESP-NOW data over OSC
-    SendToPD(myData.sensordata);
+    SendToPD(myData.valueX);
+    SendToPD(myData.valueY);
+
 }
 
 // Print the correct MAC address
