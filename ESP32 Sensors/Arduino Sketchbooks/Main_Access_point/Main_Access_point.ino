@@ -17,54 +17,110 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 
 
 // Structure to receive data
-typedef struct struct_message {
+typedef struct joystickStruct {
     int id;
     float valueX;
     float valueY;
 
-} struct_message;
+} joystickStruct;
 
+// Structure to receive data
+typedef struct distancestruct {
+    int id;
+    float distance;
+} distancestruct;
 
-struct_message myData;
+typedef struct myDataStruct {
+    int id;
+    float value;
+} myDataStruct;
 
+distancestruct distanceData;
 
-void SendToPD(float message) {
+joystickStruct joystickData;
+
+myDataStruct myData;
+
+// For sending ONE float or value
+void SendToPD(float message, char* name) 
+{
     Serial.print("Sending OSC: ");
     Serial.println(message);
-    OSCMessage msg("/sensordata");
+    OSCMessage msg("/Sensordata");
     msg.add(message);
     pdudp.beginPacket(IPOut, OUT_PORT);
     msg.send(pdudp);
     int success = pdudp.endPacket();
     msg.empty();
-    Serial.println(success ? "OSC Sent!" : "OSC Failed!");
+    //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
+// overload method for sending TWO floats
 
+void SendToPD(float message1, float message2, char* name) 
+{
+    Serial.print("Sending OSC: ");
+    Serial.println(message1);
+    Serial.println(message2);
+    OSCMessage msg(name);
+    msg.add(message1);
+    msg.add(message2);
+    pdudp.beginPacket(IPOut, OUT_PORT);
+    msg.send(pdudp);
+    int success = pdudp.endPacket();
+    msg.empty();
+    //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
+}
+
+/*
 // Callback function when ESP-NOW data is received
 void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
     memcpy(&myData, incomingData, sizeof(myData));
-    Serial.print("Bytes received: ");
-    Serial.println(len);
-    Serial.print("int: ");
-    Serial.println(myData.id);
+    //Serial.print("Bytes received: ");
+    //Serial.println(len);
+    //Serial.print("int: ");
+    //Serial.println(myData.id);
     Serial.print("float: ");
-    Serial.println(myData.valueX);
-    Serial.print("float: ");
-    Serial.println(myData.valueY);
+    Serial.println(myData.value);
 
     // Send received ESP-NOW data over OSC
-    SendToPD(myData.valueX);
-    SendToPD(myData.valueY);
+    SendToPD(myData.value, "/JoystickXY");
 
 }
+*/
+
+
+void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
+    // Read the first integer (ID) before knowing the full structure
+    int receivedID;
+    memcpy(&receivedID, incomingData, sizeof(int));  // Extract only the first integer
+
+    // Serial.println("Listening");
+
+    if(receivedID == 1 && len == sizeof(joystickStruct))
+    {
+      Serial.println("Received ID: 1");
+      memcpy(&joystickData, incomingData, sizeof(joystickStruct));
+
+      Serial.println(joystickData.valueX);
+    }
+
+    if(receivedID == 2 && len == sizeof(distancestruct))
+    {
+       Serial.println("Received ID: 2");
+       memcpy(&distanceData, incomingData, sizeof(distancestruct));
+
+       Serial.println(distanceData.distance);
+    }
+}
+
 
 // Print the correct MAC address
 void printMacAddress() {
     uint8_t mac[6];
     WiFi.macAddress(mac);
-    Serial.printf("STA MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
-                  mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    //Serial.printf("STA MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+    //              mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 void setup() {

@@ -16,15 +16,15 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 5;
-const int echoPin = 9;
+const int trigPin = 25;
+const int echoPin = 21;
 #define SOUND_SPEED 0.034
 long duration;
 float distanceCm;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("\r\nLast Packet Send Status:\t");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 void setup() {
@@ -86,7 +86,7 @@ float readSensor()
 }
 
 void loop() {
-  myData.id = 1;
+  myData.id = 2;
   myData.distance = readSensor();
   
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
