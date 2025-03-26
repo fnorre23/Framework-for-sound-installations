@@ -20,8 +20,8 @@ esp_now_peer_info_t peerInfo;
 #define JOYY 3
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  //Serial.print("\r\nLast Packet Send Status:\t");
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 void setup() {
@@ -30,7 +30,7 @@ void setup() {
   // Connect to the ESPnow network
   WiFi.mode(WIFI_STA);
   WiFi.begin("ESP32now");
-  Serial.print("Connecting to ESP32now network");
+  Serial.println("Connecting to ESP32now network");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
@@ -77,13 +77,16 @@ void loop() {
   myData.id = 1;
   myData.valueX = readSensorX();
   myData.valueY = readSensorY();
+
+  Serial.println(myData.valueX);
+  Serial.println(myData.valueY);
   
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
   if (result == ESP_OK) {
-    Serial.println("Sent with success");
+    //Serial.println("Sent with success");
   } else {
-    Serial.println("Error sending the data");
+    //Serial.println("Error sending the data");
   }
 
   delay(10);
