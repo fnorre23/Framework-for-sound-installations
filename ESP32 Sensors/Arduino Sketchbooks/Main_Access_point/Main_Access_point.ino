@@ -8,15 +8,14 @@
 const char* ssid = "ESP32now";
 
 // UDP settings - This is for sending OSC messages
-//#define UDP_PORT 3000
 WiFiUDP pdudp; // Define UDP object for OSC
-
 IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
-#define OUT_PORT 3001
 
+// Each sensor sending on a different port
+#define OUT_PORT_JOY 3001
+#define OUT_PORT_DIST 3002
 
-
-// Structure to receive data
+// Structure to receive joystick data
 typedef struct joystickStruct {
     int id;
     float valueX;
@@ -24,31 +23,24 @@ typedef struct joystickStruct {
 
 } joystickStruct;
 
-// Structure to receive data
+// Structure to receive distance sensor data
 typedef struct distancestruct {
     int id;
     float distance;
 } distancestruct;
 
-typedef struct myDataStruct {
-    int id;
-    float value;
-} myDataStruct;
-
+// Creating instances of the structs to temporarily store data
+joystickStruct joystickData;
 distancestruct distanceData;
 
-joystickStruct joystickData;
-
-myDataStruct myData;
-
 // For sending ONE float or value
-void SendToPD(float message, char* name) 
+void SendToPD(float message, char* name, int port) 
 {
     Serial.print("Sending OSC: ");
     Serial.println(message);
-    OSCMessage msg("/Sensordata");
+    OSCMessage msg(name);
     msg.add(message);
-    pdudp.beginPacket(IPOut, OUT_PORT);
+    pdudp.beginPacket(IPOut, port);
     msg.send(pdudp);
     int success = pdudp.endPacket();
     msg.empty();
@@ -56,8 +48,7 @@ void SendToPD(float message, char* name)
 }
 
 // overload method for sending TWO floats
-
-void SendToPD(float message1, float message2, char* name) 
+void SendToPD(float message1, float message2, char* name, int port) 
 {
     Serial.print("Sending OSC: ");
     Serial.println(message1);
@@ -65,44 +56,37 @@ void SendToPD(float message1, float message2, char* name)
     OSCMessage msg(name);
     msg.add(message1);
     msg.add(message2);
-    pdudp.beginPacket(IPOut, OUT_PORT);
+    pdudp.beginPacket(IPOut, port);
     msg.send(pdudp);
     int success = pdudp.endPacket();
     msg.empty();
     //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
-/*
-// Callback function when ESP-NOW data is received
-void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
-    memcpy(&myData, incomingData, sizeof(myData));
-    //Serial.print("Bytes received: ");
-    //Serial.println(len);
-    //Serial.print("int: ");
-    //Serial.println(myData.id);
-    Serial.print("float: ");
-    Serial.println(myData.value);
-
-    // Send received ESP-NOW data over OSC
-    SendToPD(myData.value, "/JoystickXY");
-
-}
-*/
-
 
 void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
+    
     // Read the first integer (ID) before knowing the full structure
     int receivedID;
     memcpy(&receivedID, incomingData, sizeof(int));  // Extract only the first integer
 
-    // Serial.println("Listening");
+    // Based on the integer, which is the ID of the board, read the data as a specific type of struct.
+    // If the ID = 1, then we know we are receiving from joystick, therefore two values 
+    // if ID = 2, distancesensor ect.
+    // ALSO: Each different ID has to send on a unique port to receive it properly in PureData
+
+    // ---------- OVERVIEW OF BOARDS -------------
+    // ID = 1 = Joystick board
+    // ID = 2 = Distance board
 
     if(receivedID == 1 && len == sizeof(joystickStruct))
     {
       Serial.println("Received ID: 1");
       memcpy(&joystickData, incomingData, sizeof(joystickStruct));
 
-      Serial.println(joystickData.valueX);
+      SendToPD(joystickData.valueX, joystickData.valueY, "/joystickXY", OUT_PORT_JOY);
+
+      //Serial.println(joystickData.valueX);
     }
 
     if(receivedID == 2 && len == sizeof(distancestruct))
@@ -110,7 +94,9 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
        Serial.println("Received ID: 2");
        memcpy(&distanceData, incomingData, sizeof(distancestruct));
 
-       Serial.println(distanceData.distance);
+       SendToPD(distanceData.distance, "/distance", OUT_PORT_DIST);
+
+       //Serial.println(distanceData.distance);
     }
 }
 
@@ -119,8 +105,8 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
 void printMacAddress() {
     uint8_t mac[6];
     WiFi.macAddress(mac);
-    //Serial.printf("STA MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
-    //              mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    Serial.printf("STA MAC Address: %02X:%02X:%02X:%02X:%02X:%02X\n",
+                  mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 void setup() {
@@ -136,7 +122,7 @@ void setup() {
     Serial.println(WiFi.softAPIP());
 
     // Print the station MAC address (use this in the sender ESP)
-    printMacAddress();
+    //printMacAddress();
 
     // Init ESP-NOW
     if (esp_now_init() != ESP_OK) {
@@ -144,6 +130,7 @@ void setup() {
         return;
     }
 
+    // Start receiving data
     esp_now_register_recv_cb(OnDataRecv);
 
     // Start UDP
