@@ -47,7 +47,7 @@ void SendToPD(float message, char* name, int port)
     //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
-// overload method for sending TWO floats
+// Overload method for sending TWO floats
 void SendToPD(float message1, float message2, char* name, int port) 
 {
     Serial.print("Sending OSC: ");
@@ -62,7 +62,6 @@ void SendToPD(float message1, float message2, char* name, int port)
     msg.empty();
     //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
-
 
 void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
     
