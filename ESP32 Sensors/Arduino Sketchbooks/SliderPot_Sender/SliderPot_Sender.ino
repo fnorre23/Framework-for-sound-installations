@@ -8,19 +8,14 @@ uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
 // Structure to send data
 typedef struct struct_message {
     int id;
-    float distance;
+    float value;
 } struct_message;
 
 struct_message myData;
 esp_now_peer_info_t peerInfo;
 
 // Sensor variables
-// Sensor specific variables
-const int trigPin = 25;
-const int echoPin = 21;
-#define SOUND_SPEED 0.034
-long duration;
-float distanceCm;
+#define DATAINPUT 1
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
@@ -33,7 +28,7 @@ void setup() {
   // Connect to the ESPnow network
   WiFi.mode(WIFI_STA);
   WiFi.begin("ESP32now");
-  Serial.print("Connecting to ESP32now network");
+  Serial.println("Connecting to ESP32now network");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
@@ -56,45 +51,28 @@ void setup() {
     return;
   }
 
-  // Specific to distance sensor
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(DATAINPUT, INPUT);
 }
 
-// Update with specific sensor logic
-float readSensor()
-{
-  // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
+float readSensor() {
+  float value = analogRead(DATAINPUT);
 
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  value = map(value, 0, 4095, 50, 1000);
 
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
-
-  // Calculate the distance
-  distanceCm = duration * SOUND_SPEED/2;
-
-  // Prints the distance in the Serial Monitor
-  Serial.println(distanceCm);
-
-  return distanceCm;
+  return value;
 }
 
 void loop() {
-  myData.id = 2;
-  myData.distance = readSensor();
-  
+  myData.id = 3;
+  myData.value = readSensor();
+  //myData.pressed = readButton();
+
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
   if (result == ESP_OK) {
-    Serial.println("Sent with success");
+    //Serial.println("Sent with success");
   } else {
-    Serial.println("Error sending the data");
+    //Serial.println("Error sending the data");
   }
 
   delay(10);

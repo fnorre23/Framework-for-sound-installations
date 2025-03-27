@@ -3,13 +3,14 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0xb8, 0xd6, 0x1a, 0x0e, 0x17, 0x0c};
+uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
 
 // Structure to send data
 typedef struct struct_message {
     int id;
     float valueX;
     float valueY;
+    //bool pressed;
 } struct_message;
 
 struct_message myData;
@@ -18,6 +19,7 @@ esp_now_peer_info_t peerInfo;
 // Sensor variables
 #define JOYX 1
 #define JOYY 3
+#define JOYPRESS 5
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
@@ -55,12 +57,13 @@ void setup() {
 
   pinMode(JOYX, INPUT);
   pinMode(JOYY, INPUT);
+  pinMode(JOYPRESS, INPUT);
 }
 
 float readSensorX() {
   float valueX = analogRead(JOYX);
 
-  valueX = map(valueX, 0, 4095, 0, 255);
+  valueX = map(valueX, 0, 4095, 50, 1000);
 
   return valueX;
 }
@@ -68,19 +71,35 @@ float readSensorX() {
 float readSensorY() {
   float valueY = analogRead(JOYY);
 
-  valueY = map(valueY, 0, 4095, 0, 255);
+  valueY = map(valueY, 0, 4095, 50, 1000);
 
   return valueY;
+}
+
+
+bool readButton()
+{
+  int buttonState = 0;
+  buttonState = digitalRead(JOYPRESS);
+
+  if (buttonState == HIGH) 
+  {
+    return true;
+  } 
+  else 
+  {
+    return false;
+  }
+  Serial.println(buttonState);
 }
 
 void loop() {
   myData.id = 1;
   myData.valueX = readSensorX();
   myData.valueY = readSensorY();
+  //myData.pressed = readButton();
 
-  Serial.println(myData.valueX);
-  Serial.println(myData.valueY);
-  
+
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
   if (result == ESP_OK) {

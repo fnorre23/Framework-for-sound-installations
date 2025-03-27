@@ -14,13 +14,14 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 // Each sensor sending on a different port
 #define OUT_PORT_JOY 3001
 #define OUT_PORT_DIST 3002
+#define OUT_PORT_SLID 3003
 
 // Structure to receive joystick data
 typedef struct joystickStruct {
     int id;
     float valueX;
     float valueY;
-
+    //bool pressed;
 } joystickStruct;
 
 // Structure to receive distance sensor data
@@ -29,9 +30,15 @@ typedef struct distancestruct {
     float distance;
 } distancestruct;
 
+typedef struct sliderStruct {
+  int id;
+  float value;
+} sliderStruct;
+
 // Creating instances of the structs to temporarily store data
 joystickStruct joystickData;
 distancestruct distanceData;
+sliderStruct sliderData;
 
 // For sending ONE float or value
 void SendToPD(float message, char* name, int port) 
@@ -63,6 +70,23 @@ void SendToPD(float message1, float message2, char* name, int port)
     //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
+// Overload method for sending TWO floats and a bool
+void SendToPD(float message1, float message2, bool pressed,char* name, int port) 
+{
+    //Serial.print("Sending OSC: ");
+    //Serial.println(message1);
+    //Serial.println(message2);
+    OSCMessage msg(name);
+    msg.add(message1);
+    msg.add(message2);
+    msg.add(pressed);
+    pdudp.beginPacket(IPOut, port);
+    msg.send(pdudp);
+    int success = pdudp.endPacket();
+    msg.empty();
+    //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
+}
+
 void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData, int len) {
     
     // Read the first integer (ID) before knowing the full structure
@@ -77,15 +101,19 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
     // ---------- OVERVIEW OF BOARDS -------------
     // ID = 1 = Joystick board
     // ID = 2 = Distance board
+    // ID = 3 = Slider board
 
     if(receivedID == 1 && len == sizeof(joystickStruct))
     {
       Serial.println("Received ID: 1");
       memcpy(&joystickData, incomingData, sizeof(joystickStruct));
 
+      //Serial.println(joystickData.pressed);
+
       SendToPD(joystickData.valueX, joystickData.valueY, "/joystickXY", OUT_PORT_JOY);
 
-      //Serial.println(joystickData.valueX);
+      Serial.println(joystickData.valueX);
+      Serial.println(joystickData.valueY);
     }
 
     if(receivedID == 2 && len == sizeof(distancestruct))
@@ -96,6 +124,14 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
        SendToPD(distanceData.distance, "/distance", OUT_PORT_DIST);
 
        //Serial.println(distanceData.distance);
+    }
+
+    if(receivedID == 3 && len == sizeof(sliderStruct))
+    {
+        Serial.println("Received ID: 3");
+        memcpy(&sliderData, incomingData, sizeof(sliderStruct));
+
+        SendToPD(distanceData.distance, "/slider", OUT_PORT_SLID);
     }
 }
 
