@@ -86,11 +86,11 @@ float readButton()
 
   if (buttonState == HIGH) 
   {
-    return 1;
+    return 0;
   } 
   else 
   {
-    return 0;
+    return 1;
   }
 
 }

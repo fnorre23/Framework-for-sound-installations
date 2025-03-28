@@ -17,7 +17,7 @@ esp_now_peer_info_t peerInfo;
 // Sensor variables
 // Sensor specific variables
 const int trigPin = 25;
-const int echoPin = 21;
+const int echoPin = 13;
 #define SOUND_SPEED 0.034
 long duration;
 float distanceCm;
