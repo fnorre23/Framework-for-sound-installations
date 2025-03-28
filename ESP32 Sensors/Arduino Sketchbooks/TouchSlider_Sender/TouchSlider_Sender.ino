@@ -15,7 +15,18 @@ struct_message myData;
 esp_now_peer_info_t peerInfo;
 
 // Sensor variables
-#define DATAINPUT 1
+#include "Seeed_CY8C401XX.h"
+
+#ifdef SEEED_XIAO_M0
+    #define SERIAL Serial
+#elif defined(ARDUINO_SAMD_VARIANT_COMPLIANCE)
+    #define SERIAL SerialUSB
+#else
+    #define SERIAL Serial
+#endif
+int valueSum;
+int lastValue;
+CY8C sensor;
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
@@ -28,7 +39,7 @@ void setup() {
   // Connect to the ESPnow network
   WiFi.mode(WIFI_STA);
   WiFi.begin("ESP32now");
-  Serial.println("Connecting to ESP32now network");
+  Serial.print("Connecting to ESP32now network");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
@@ -51,31 +62,52 @@ void setup() {
     return;
   }
 
-  pinMode(DATAINPUT, INPUT);
+  // Specific to touch sensor
+  sensor.init();
+
+  lastValue = 0;
 }
 
-float readSensor() {
-  float value = analogRead(DATAINPUT);
-  
-  Serial.println(value);
+// Update with specific sensor logic
+float readSensor()
+{
+  u8 value = 0;
+    sensor.get_touch_slider_value(&value);
 
-  value = map(value, 0, 4095, 50, 1000);
+    if(lastValue < value)
+    {
+      valueSum += (value / 10);
+      if(valueSum > 1000)
+      {
+        valueSum = 1000;
+      }
+    }
+    else if(lastValue > value)
+    {
+      valueSum -= (value / 10);
+      if(valueSum < 50)
+      {
+        valueSum = 50;
+      }
+    }
 
+    lastValue = value;
 
-  return value;
+    SERIAL.println(valueSum);
+
+  return valueSum;
 }
 
 void loop() {
   myData.id = 3;
   myData.value = readSensor();
-  //myData.pressed = readButton();
-
+  
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
   if (result == ESP_OK) {
-    //Serial.println("Sent with success");
+    Serial.println("Sent with success");
   } else {
-    //Serial.println("Error sending the data");
+    Serial.println("Error sending the data");
   }
 
   delay(10);

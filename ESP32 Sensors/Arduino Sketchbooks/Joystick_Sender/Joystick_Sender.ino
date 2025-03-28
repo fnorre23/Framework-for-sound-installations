@@ -3,14 +3,14 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
+uint8_t broadcastAddress[] ={0xB8, 0xD6, 0x1A, 0x0E, 0x17, 0x0C};
 
 // Structure to send data
 typedef struct struct_message {
     int id;
     float valueX;
     float valueY;
-    //bool pressed;
+    float pressed;
 } struct_message;
 
 struct_message myData;
@@ -77,27 +77,29 @@ float readSensorY() {
 }
 
 
-bool readButton()
+float readButton()
 {
   int buttonState = 0;
   buttonState = digitalRead(JOYPRESS);
+  
+  Serial.println(buttonState);
 
   if (buttonState == HIGH) 
   {
-    return true;
+    return 1;
   } 
   else 
   {
-    return false;
+    return 0;
   }
-  Serial.println(buttonState);
+
 }
 
 void loop() {
   myData.id = 1;
   myData.valueX = readSensorX();
   myData.valueY = readSensorY();
-  //myData.pressed = readButton();
+  myData.pressed = readButton();
 
 
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
