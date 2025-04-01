@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xD8};
 
 // Structure to send data
 typedef struct struct_message {
@@ -16,8 +16,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 25;
-const int echoPin = 13;
+const int trigPin = 9;
+const int echoPin = 5;
 #define SOUND_SPEED 0.034
 long duration;
 float distanceCm;

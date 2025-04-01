@@ -44,7 +44,7 @@ sliderTouchStruct sliderTouchData;
 // For sending ONE float or value
 void SendToPD(float message, char* name, int port) 
 {
-    Serial.print("Sending OSC: ");
+    //Serial.print("Sending OSC: ");
     Serial.println(message);
     OSCMessage msg(name);
     msg.add(message);
@@ -113,9 +113,9 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
 
       SendToPD(joystickData.valueX, joystickData.valueY, joystickData.pressed, "/joystickXY", OUT_PORT_JOY);
 
-      Serial.println(joystickData.valueX);
-      Serial.println(joystickData.valueY);
-      Serial.println(joystickData.pressed);
+      //Serial.println(joystickData.valueX);
+      //Serial.println(joystickData.valueY);
+      //Serial.println(joystickData.pressed);
     }
 
     if(receivedID == 2 && len == sizeof(distancestruct))
@@ -133,7 +133,7 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
 
         SendToPD(sliderTouchData.value, "/sliderTouch", OUT_PORT_SLID);
 
-        Serial.print(sliderTouchData.value);
+        //Serial.print(sliderTouchData.value);
     }
 }
 

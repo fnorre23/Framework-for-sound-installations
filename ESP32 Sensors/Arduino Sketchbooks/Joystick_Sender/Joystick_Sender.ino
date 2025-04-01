@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] ={0xB8, 0xD6, 0x1A, 0x0E, 0x17, 0x0C};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xD8};
 
 // Structure to send data
 typedef struct struct_message {
