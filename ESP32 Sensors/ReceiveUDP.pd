@@ -41,7 +41,7 @@
 #X obj 1066 481 unpack f;
 #X obj 72 510 unpack f f f;
 #X listbox 263 537 20 0 0 0 Value\ Y - - 0;
-#N canvas 720 189 905 726 SFXs 0;
+#N canvas 248 40 1070 865 SFXs 1;
 #N canvas 848 144 880 707 Engine 0;
 #N canvas 514 106 663 715 FMSynth 0;
 #X obj 99 206 vsl 19 162 0 1000 0 0 empty empty empty 0 -9 0 12 #fcfcfc #000000 #000000 0 1;
@@ -539,7 +539,7 @@
 #X connect 21 0 18 1;
 #X restore 215 318 pd Engine;
 #X obj 220 285 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
-#X obj 170 215 hsl 162 19 50 1000 0 0 empty empty empty -2 -10 0 12 #fcfcfc #000000 #000000 0 1;
+#X obj 150 215 hsl 162 19 50 1000 0 0 empty empty empty -2 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X obj 81 133 loadbang;
 #X msg 82 157 1000;
 #X obj 473 381 dac~;
@@ -882,6 +882,7 @@
 #X obj 340 32 spigot 1;
 #X msg 341 -5 0;
 #X obj 520 68 bng 19 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 224 40 tgl 19 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000 0 1;
 #X connect 0 0 8 0;
 #X connect 1 0 0 1;
 #X connect 2 0 0 0;
@@ -919,6 +920,7 @@
 #X connect 29 1 31 0;
 #X connect 30 0 31 1;
 #X connect 31 0 33 0;
+#X connect 31 0 34 0;
 #X connect 32 0 31 1;
 #X connect 33 0 13 0;
 #X connect 33 0 21 0;
