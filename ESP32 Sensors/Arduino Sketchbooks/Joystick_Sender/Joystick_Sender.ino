@@ -1,9 +1,21 @@
+//This code has been written with help from RandomNerdTutorials and some ChatGPT prompts
+
+/*
+  Rui Santos & Sara Santos - Random Nerd Tutorials
+  Complete project details at https://RandomNerdTutorials.com/esp-now-esp32-arduino-ide/
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+*/
+
+
+
+
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xD8};
+uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
 
 // Structure to send data
 typedef struct struct_message {
@@ -17,9 +29,9 @@ struct_message myData;
 esp_now_peer_info_t peerInfo;
 
 // Sensor variables
-#define JOYX 1
-#define JOYY 3
-#define JOYPRESS 5
+#define JOYX A1
+#define JOYY A3
+#define JOYPRESS 13
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t");
