@@ -98,7 +98,7 @@ float readSensor()
 }
 
 void loop() {
-  myData.id = 2;
+  myData.id = 1;
   myData.distance = readSensor();
   
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
