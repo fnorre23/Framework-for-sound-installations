@@ -24,9 +24,9 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 #define OUT_PORT 3001
 
 // Array with values
-float distArray[25];
+float distArray[2];
 
-const int arrayLength = 25;
+const int arrayLength = 2;
 
 volatile bool newDataAvailable = false;
 
@@ -46,9 +46,25 @@ void SendToPD(float message[arrayLength], char* name, int port)
 
     for(int i = 0; i < arrayLength; i++)
     {
-      long value = map(message[i], 0, 100, -100, 100);
+      float floatValue;
 
-      float floatValue = (float)value / 100;
+      if(message[i] < 25)
+      {
+        long value = map(message[i], 0, 25, 0, 100);
+
+        floatValue = (float)value / 100;
+
+        if(floatValue > 1)
+        {
+          floatValue = 1;
+        }
+      }
+      else
+      {
+        floatValue = 1;
+      }
+
+      Serial.println(floatValue);
 
       msg.add(floatValue);
     }
@@ -115,12 +131,6 @@ void loop()
     if(newDataAvailable)
     {
       newDataAvailable = false;
-
-      for(int i = 0; i < arrayLength; i++)
-      {
-        distArray[i] = random(0, 100);
-        Serial.println(distArray[i]);
-      }
 
       distArray[data.id - 1] = data.distance;
 

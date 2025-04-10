@@ -71,6 +71,12 @@ void setup() {
   // Specific to distance sensor
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+
+  myData.id = 2;
+  Serial.print("Board ID: ");
+  Serial.println(myData.id);
+
+  Serial.println("Sending data");
 }
 
 // Update with specific sensor logic
@@ -92,19 +98,18 @@ float readSensor()
   distanceCm = duration * SOUND_SPEED/2;
 
   // Prints the distance in the Serial Monitor
-  Serial.println(distanceCm);
+  // Serial.println(distanceCm);
 
   return distanceCm;
 }
 
 void loop() {
-  myData.id = 1;
   myData.distance = readSensor();
   
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
   if (result == ESP_OK) {
-    Serial.println("Sent with success");
+    //Serial.println("Sent with success");
   } else {
     Serial.println("Error sending the data");
   }
