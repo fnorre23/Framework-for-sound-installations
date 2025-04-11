@@ -24,16 +24,16 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 #define OUT_PORT 3001
 
 // Array with values
-float distArray[2];
+float distArray[3];
 
-const int arrayLength = 2;
+const int arrayLength = 1;
 
 volatile bool newDataAvailable = false;
 
 // Structure to receive distance sensor data
 typedef struct dataStruct {
     int id;
-    float distance;
+    float distance[3];
 } dataStruct;
 
 // Creating instance of the struct to temporarily store data
@@ -132,7 +132,17 @@ void loop()
     {
       newDataAvailable = false;
 
-      distArray[data.id - 1] = data.distance;
+      int index = (data.id - 1) * 3;  // Calculate base index for this ID
+
+      for (int i = 0; i < 3; i++) 
+      {
+        distArray[index + i] = data.distance[i];
+        
+        Serial.print("distArray[");
+        Serial.print(index + i);
+        Serial.print("] = ");
+        Serial.println(data.distance[i]);
+      }
 
       SendToPD(distArray, "/distArray", OUT_PORT);
     }

@@ -7,9 +7,6 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-
-
-
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Arduino.h>
@@ -20,7 +17,7 @@ uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xD8};
 // Structure to send data
 typedef struct struct_message {
     int id;
-    float distance;
+    float distance[3];
 } struct_message;
 
 struct_message myData;
@@ -28,8 +25,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 43;
-const int echoPin = 44;
+const int trigPins[3] = {1, 3, 5};
+const int echoPins[3] = {7, 9, 13};
 
 #define SOUND_SPEED 0.034
 long duration;
@@ -70,10 +67,13 @@ void setup() {
   }
 
   // Specific to distance sensor
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  for(int i = 0; i < 3; i++)
+  {
+    pinMode(trigPins[i], OUTPUT); // Sets the trigPin as an Output
+    pinMode(echoPins[i], INPUT); // Sets the echoPin as an Input
+  }
 
-  myData.id = 2;
+  myData.id = 1;
   Serial.print("Board ID: ");
   Serial.println(myData.id);
 
@@ -81,31 +81,35 @@ void setup() {
 }
 
 // Update with specific sensor logic
-float readSensor()
+float readSensors()
 {
-  // Clears the trigPin
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
+  for(int i = 0; i < 3; i++)
+  {
+    // Clears the trigPin
+    digitalWrite(trigPins[i], LOW);
+    delayMicroseconds(2);
 
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+    // Sets the trigPin on HIGH state for 10 micro seconds
+    digitalWrite(trigPins[i], HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPins[i], LOW);
 
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
+    // Reads the echoPin, returns the sound wave travel time in microseconds
+    duration = pulseIn(echoPins[i], HIGH);
 
-  // Calculate the distance
-  distanceCm = duration * SOUND_SPEED/2;
+    // Calculate the distance
+    distanceCm = duration * SOUND_SPEED/2;
 
-  // Prints the distance in the Serial Monitor
-  Serial.println(distanceCm);
+    // Prints the distance in the Serial Monitor
+    Serial.println(distanceCm);
+    myData.distance[i] = distanceCm;
+  }
 
   return distanceCm;
 }
 
 void loop() {
-  myData.distance = readSensor();
+  readSensors();
   
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
   
