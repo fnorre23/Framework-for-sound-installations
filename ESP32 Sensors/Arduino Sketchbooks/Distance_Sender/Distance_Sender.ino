@@ -28,8 +28,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 43;
-const int echoPin = 44;
+const int trigPin = 5;
+const int echoPin = 13;
 
 #define SOUND_SPEED 0.034
 long duration;
