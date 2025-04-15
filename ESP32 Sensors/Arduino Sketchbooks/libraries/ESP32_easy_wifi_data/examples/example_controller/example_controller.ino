@@ -43,11 +43,9 @@ void loop()
 {
     buttonVal = digitalRead(buttonPin);
     EWD::runWifiCommunication();
-
     if (EWD::newData()) {
         Serial.println("got new data");
     }
-    
     digitalWrite(ledPin, ledVal);
     delay(10);
 }

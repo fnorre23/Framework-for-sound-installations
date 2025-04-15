@@ -28,8 +28,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 5;
-const int echoPin = 13;
+const int trigPin = 9;
+const int echoPin = 9;
 
 #define SOUND_SPEED 0.034
 long duration;
@@ -115,5 +115,5 @@ void loop() {
     Serial.println("Error sending the data");
   }
 
-  delay(10);
+  delay(100);
 }
