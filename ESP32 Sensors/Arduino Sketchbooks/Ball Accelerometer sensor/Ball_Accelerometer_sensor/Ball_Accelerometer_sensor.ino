@@ -1,5 +1,5 @@
 //This code has been written with help from RandomNerdTutorials and some ChatGPT prompts
-
+// The Sparkfun Linear Accelerometer code is from the example code from sparkfun BN0086 example Git repository found at https://github.com/sparkfun/SparkFun_VR_IMU_Breakout_BNO086_QWIIC
 /*
   Rui Santos & Sara Santos - Random Nerd Tutorials
   Complete project details at https://RandomNerdTutorials.com/esp-now-esp32-arduino-ide/
