@@ -28,6 +28,7 @@ typedef struct struct_message {
     float x ;
     float y ;
     float z ;
+    float Acceleration ;
 } struct_message;
 
 struct_message myData;
@@ -63,6 +64,13 @@ void setReports(void) {
   }
 }
 
+
+void CalculateSpeed()
+{
+float Acceleration = sqrt((myData.x*myData.x+ myData.y*myData.y+ myData.z*myData.z));
+myData.Acceleration=Acceleration;
+
+}
 
 void setup() {
   Serial.begin(115200);
@@ -163,7 +171,11 @@ void loop() {
       //Serial.print(linAccuracy);
 
       Serial.println();
+
+  
     }
+    CalculateSpeed();
+
   }
 
   delay(50);
