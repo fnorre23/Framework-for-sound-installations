@@ -210,8 +210,13 @@ void loop()
 
     float accArray[4] = {accData.x, accData.y, accData.z, accData.acceleration};
 
-    Serial.println(accData.acceleration);
+    Serial.print("Acceleration: ");
+    Serial.print(accData.acceleration);
+    Serial.print(",");
+    Serial.print("X: ");
+    Serial.println(accData.x);
 
+    Serial.println();
     SendAccToPD(accArray, "/accelerometer", OUT_PORT_ACC);
   }
 }
