@@ -38,18 +38,21 @@ typedef struct distStruct {
 
 bool updateArrayCheck[arrayLength];
 
-// Acceleromneter Sensor
-volatile bool newAccDataAvailable = false;
 
-typedef struct accStruct {
+// Acceleromneter Sensor
+volatile bool newballDataAvailable = false;
+int ballArrayLength = 7;
+
+typedef struct ballStruct {
     int id;
-    float x, y, z;
+    float ax, ay, az;
     float acceleration;
-} accStruct;
+    float ex, ey, ez;
+} ballStruct;
 
 // Creating instance of the struct to temporarily store data
 distStruct distData;
-accStruct accData;
+ballStruct ballData;
 
 // For sending the array
 void SendToArrayPD(float message[arrayLength], char* name, int port) 
@@ -88,11 +91,11 @@ void SendToArrayPD(float message[arrayLength], char* name, int port)
     //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
-void SendAccToPD(float message[4], char* name, int port)
+void SendAccToPD(float message[], char* name, int port)
 {
   OSCMessage msg(name);
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < ballArrayLength; i++)
     {
       msg.add(message[i]);
     }
@@ -121,10 +124,10 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
   else if(receivedID == 11)
   {
     // Copy received data into the struct
-    memcpy(&accData, incomingData, sizeof(accData));
+    memcpy(&ballData, incomingData, sizeof(ballData));
 
     // Set bool so the data gets sent to PD in main loop
-    newAccDataAvailable = true;
+    newballDataAvailable = true;
   }
   else
   {
@@ -204,14 +207,19 @@ void loop()
     }
   }
 
-  if (newAccDataAvailable)
+  if (newballDataAvailable)
   {
-    newAccDataAvailable = false;
+    newballDataAvailable = false;
 
-    float accArray[4] = {accData.x, accData.y, accData.z, accData.acceleration};
+    float accArray[ballArrayLength] = {ballData.ax, ballData.ay, ballData.az, ballData.acceleration, ballData.ex, ballData.ey, ballData.ez};
 
-    Serial.println(accData.acceleration);
+    Serial.print("Acceleration: ");
+    Serial.print(ballData.acceleration);
+    Serial.print(",");
+    Serial.print("X: ");
+    Serial.println(ballData.ex);
 
+    Serial.println();
     SendAccToPD(accArray, "/accelerometer", OUT_PORT_ACC);
   }
 }
