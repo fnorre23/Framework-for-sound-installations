@@ -15,7 +15,7 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xD8};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xCF, 0x10};
 
 // Structure to send data
 typedef struct struct_message {
@@ -28,8 +28,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 9;
-const int echoPin = 9;
+const int trigPin = 1;
+const int echoPin = 3;
 
 #define SOUND_SPEED 0.034
 long duration;
@@ -73,7 +73,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
-  myData.id = 2;
+  myData.id = 3;
   Serial.print("Board ID: ");
   Serial.println(myData.id);
 

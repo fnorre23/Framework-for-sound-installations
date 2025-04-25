@@ -8,7 +8,7 @@
 */
 
 #include <Arduino.h>
-#include <esp_now.h>
+#include <ESP_NOW.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
@@ -26,7 +26,7 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 
 // Distance sensors
 float distArray[10];
-const int arrayLength = 10;
+const int arrayLength = 3;
 float maxSensorDistance = 50;
 volatile bool newDistDataAvailable = false;
 
