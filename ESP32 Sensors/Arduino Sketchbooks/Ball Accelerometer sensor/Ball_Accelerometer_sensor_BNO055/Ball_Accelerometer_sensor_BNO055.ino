@@ -13,6 +13,7 @@
 #include <Wire.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
+#include "esp_adc_cal.h"
 
 // ESP-NOW MAC Address of receiver
 uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xCF, 0x10};
@@ -60,6 +61,8 @@ imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   myData.z = acc.z();
 
 }
+
+
 
 
 
@@ -144,6 +147,8 @@ void setup() {
 
 void loop() {
 
+
+
 sensors_event_t event;
 
     bno.getEvent(&event);
@@ -153,6 +158,27 @@ sensors_event_t event;
     myData.E_x= event.orientation.x;
     myData.E_y= event.orientation.y;
     myData.E_z= event.orientation.z;
+    
+
+
+
+  /* Also send calibration data for each sensor. */
+uint8_t sys, gyro, accel, mag = 0;
+  bno.getCalibration(&sys, &gyro, &accel, &mag);
+  Serial.print(F("Calibration: "));
+  Serial.print(sys, DEC);
+  Serial.print(F(" "));
+  Serial.print(gyro, DEC);
+  Serial.print(F(" "));
+  Serial.print(accel, DEC);
+  Serial.print(F(" "));
+  Serial.println(mag, DEC);
+
+int8_t boardTemp = bno.getTemp();
+  Serial.println();
+  Serial.print(F("temperature: "));
+  Serial.println(boardTemp);
+
   //imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   //myData.x = acc.x();
