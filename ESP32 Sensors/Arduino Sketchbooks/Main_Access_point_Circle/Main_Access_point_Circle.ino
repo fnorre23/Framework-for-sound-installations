@@ -79,6 +79,8 @@ void SendToArrayPD(float message[arrayLength], char* name, int port)
         floatValue = 1;
       }
 
+      Serial.print(i);
+      Serial.print("     ");
       Serial.println(floatValue);
 
       msg.add(floatValue);
@@ -183,6 +185,8 @@ void loop()
     distArray[distData.id] = distData.distance;
 
     updateArrayCheck[distData.id - 1] = true;
+
+    
 
     // Check if all bool values in updateArrayCheck are true
     bool allTrue = true;
