@@ -25,8 +25,8 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 #define OUT_PORT_ACC 3002
 
 // Distance sensors
-float distArray[10];
-const int arrayLength = 10;
+float distArray[3];
+const int arrayLength = 3;
 float maxSensorDistance = 50;
 volatile bool newDistDataAvailable = false;
 
@@ -213,11 +213,13 @@ void loop()
 
     float accArray[ballArrayLength] = {ballData.ax, ballData.ay, ballData.az, ballData.acceleration, ballData.ex, ballData.ey, ballData.ez};
 
+    /*
     Serial.print("Acceleration: ");
     Serial.print(ballData.acceleration);
     Serial.print(",");
     Serial.print("X: ");
     Serial.println(ballData.ex);
+    */
 
     Serial.println();
     SendAccToPD(accArray, "/accelerometer", OUT_PORT_ACC);
