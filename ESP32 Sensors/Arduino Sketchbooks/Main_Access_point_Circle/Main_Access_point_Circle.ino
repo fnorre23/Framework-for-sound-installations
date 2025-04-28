@@ -30,6 +30,7 @@ const int arrayLength = 3;
 float maxSensorDistance = 50;
 volatile bool newDistDataAvailable = false;
 
+
 // Structure to receive distance sensor data
 typedef struct distStruct {
     int id;
@@ -58,9 +59,11 @@ ballStruct ballData;
 void SendToArrayPD(float message[arrayLength], char* name, int port) 
 {
     OSCMessage msg(name);
+  
 
     for(int i = 0; i < arrayLength; i++)
     {
+      /*
       float floatValue;
 
       if(message[i] < 25)
@@ -78,10 +81,14 @@ void SendToArrayPD(float message[arrayLength], char* name, int port)
       {
         floatValue = 1;
       }
+      */
 
-      Serial.print(i);
-      Serial.print("     ");
-      Serial.println(floatValue);
+      //Serial.print(i);
+      //Serial.print("     ");
+      //Serial.println(floatValue);
+
+      float floatValue=message[i];
+
 
       msg.add(floatValue);
     }
@@ -147,6 +154,7 @@ void printMacAddress() {
 
 void setup() {
     Serial.begin(115200);
+    
 
     // Set ESP32 as both Access Point and Station
     WiFi.mode(WIFI_AP_STA);
@@ -209,7 +217,9 @@ void loop()
 
       SendToArrayPD(distArray, "/distArray", OUT_PORT_DIST);
     }
+    delay(10);
   }
+
 
   if (newballDataAvailable)
   {
@@ -228,4 +238,5 @@ void loop()
     Serial.println();
     SendAccToPD(accArray, "/accelerometer", OUT_PORT_ACC);
   }
+  
 }
