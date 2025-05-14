@@ -698,7 +698,7 @@
 #X restore 145 175 pd samplePicker;
 #X obj 22 152 s~ AudioOut;
 #X obj 55 124 r Volume;
-#N canvas 117 38 293 427 TouchDesigner 0;
+#N canvas 117 38 293 427 TouchDesigner 1;
 #X obj 21 333 netsend -u -b;
 #X msg 37 302 connect 127.0.0.1 5005;
 #X obj 21 363 print listening;
@@ -708,9 +708,9 @@
 #X msg 22 45 set xAxis \, $f1;
 #X msg 56 97 set yAxis \, $f1;
 #X msg 92 150 set zAxis \, $f1;
-#X obj 22 19 r XQuaternionSensorValue;
-#X obj 56 72 r YQuaternionSensorValue;
-#X obj 92 125 r ZQuaternionSensorValue;
+#X obj 92 125 r sensorZ;
+#X obj 56 72 r sensorY;
+#X obj 22 19 r sensorX;
 #X connect 0 0 2 0;
 #X connect 1 0 0 0;
 #X connect 3 0 0 0;
@@ -719,9 +719,9 @@
 #X connect 6 0 3 0;
 #X connect 7 0 3 0;
 #X connect 8 0 3 0;
-#X connect 9 0 6 0;
+#X connect 9 0 8 0;
 #X connect 10 0 7 0;
-#X connect 11 0 8 0;
+#X connect 11 0 6 0;
 #X restore 145 199 pd TouchDesigner;
 #X connect 6 0 8 0;
 #X connect 6 0 7 0;
