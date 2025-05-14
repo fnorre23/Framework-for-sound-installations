@@ -23,13 +23,13 @@ IPAddress IPOut(192, 168, 4, 2); // Destination IP for sending OSC
 // Each sensor sending on a different port
 #define OUT_PORT_DIST 3001
 #define OUT_PORT_ACC 3002
+#define OUT_PORT_JOY 3003
 
 // Distance sensors
-float distArray[3];
-const int arrayLength = 3;
+float distArray[2];
+const int arrayLength = 2;
 float maxSensorDistance = 50;
 volatile bool newDistDataAvailable = false;
-
 
 // Structure to receive distance sensor data
 typedef struct distStruct {
@@ -38,7 +38,6 @@ typedef struct distStruct {
 } distStruct;
 
 bool updateArrayCheck[arrayLength];
-
 
 // Acceleromneter Sensor
 volatile bool newballDataAvailable = false;
@@ -51,53 +50,38 @@ typedef struct ballStruct {
     float ex, ey, ez;
 } ballStruct;
 
+// Joystick sensor
+typedef struct joyStruct {
+  int id;
+  float valueX;
+  float valueY;
+  float pressed;
+} joyStruct;
+
+volatile bool newJoyDataAvailable = false;
+
 // Creating instance of the struct to temporarily store data
 distStruct distData;
 ballStruct ballData;
+joyStruct joyData;
 
 // For sending the array
-void SendToArrayPD(float message[arrayLength], char* name, int port) 
+void SendToArrayPD(float message[], char* name, int port, int length) 
 {
     OSCMessage msg(name);
   
-
-    for(int i = 0; i < arrayLength; i++)
+    for(int i = 0; i < length; i++)
     {
-      /*
-      float floatValue;
-
-      if(message[i] < 25)
-      {
-        long value = map(message[i], 0, 25, 0, 100);
-
-        floatValue = (float)value / 100;
-
-        if(floatValue > 1)
-        {
-          floatValue = 1;
-        }
-      }
-      else
-      {
-        floatValue = 1;
-      }
-      */
-
-      //Serial.print(i);
-      //Serial.print("     ");
-      //Serial.println(floatValue);
-
       float floatValue=message[i];
-
-
       msg.add(floatValue);
     }
 
     pdudp.beginPacket(IPOut, port);
     msg.send(pdudp);
+
     int success = pdudp.endPacket();
     msg.empty();
-    //Serial.println(success ? "OSC Sent!" : "OSC Failed!");
+    // Serial.println(success ? "OSC Sent!" : "OSC Failed!");
 }
 
 void SendAccToPD(float message[], char* name, int port)
@@ -138,6 +122,14 @@ void OnDataRecv(const esp_now_recv_info_t *recvInfo, const uint8_t *incomingData
     // Set bool so the data gets sent to PD in main loop
     newballDataAvailable = true;
   }
+  else if(receivedID == 12)
+  {
+    // Copy received data into the struct
+    memcpy(&joyData, incomingData, sizeof(joyData));
+
+    // Set bool so the data gets sent to PD in main loop
+    newJoyDataAvailable = true;
+  }
   else
   {
     Serial.println("ID not valid or something");
@@ -155,7 +147,6 @@ void printMacAddress() {
 void setup() {
     Serial.begin(115200);
     
-
     // Set ESP32 as both Access Point and Station
     WiFi.mode(WIFI_AP_STA);
     WiFi.softAP(ssid);
@@ -174,6 +165,7 @@ void setup() {
         return;
     }
 
+    Serial.print("Distance sensor count: ");
     Serial.println(arrayLength);
 
     // Start receiving data
@@ -190,11 +182,9 @@ void loop()
   {
     newDistDataAvailable = false;
 
-    distArray[distData.id] = distData.distance;
+    distArray[distData.id - 1] = distData.distance;
 
     updateArrayCheck[distData.id - 1] = true;
-
-    
 
     // Check if all bool values in updateArrayCheck are true
     bool allTrue = true;
@@ -210,12 +200,14 @@ void loop()
     // If all values are true, send data to PD
     if (allTrue)
     {
-      for (int i = 0; i < sizeof(updateArrayCheck) / sizeof(updateArrayCheck[0]); i++)
+      for (int i = 0; i < arrayLength + 1; i++)
       {
         updateArrayCheck[i] = false;
       }
 
-      SendToArrayPD(distArray, "/distArray", OUT_PORT_DIST);
+      Serial.println("All distances received, sending data");
+
+      SendToArrayPD(distArray, "/distArray", OUT_PORT_DIST, arrayLength);
     }
     delay(10);
   }
@@ -235,8 +227,18 @@ void loop()
     Serial.println(ballData.ex);
     */
 
-    Serial.println();
+    Serial.println("Sending Gyro data");
     SendAccToPD(accArray, "/accelerometer", OUT_PORT_ACC);
   }
   
+  if(newJoyDataAvailable)
+  {
+    newJoyDataAvailable = false;
+
+    float joyArray[3] = {joyData.valueX, joyData.valueY, joyData.pressed};
+
+    Serial.println("Sending joystick");
+    SendToArrayPD(joyArray, "/JoystickXYP", OUT_PORT_JOY, 3);
+  }
+
 }

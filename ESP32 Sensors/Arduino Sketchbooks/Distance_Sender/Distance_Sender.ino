@@ -7,15 +7,12 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-
-
-
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xCF, 0x10};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xB4};
 
 // Structure to send data
 typedef struct struct_message {
@@ -28,8 +25,8 @@ esp_now_peer_info_t peerInfo;
 
 // Sensor variables
 // Sensor specific variables
-const int trigPin = 1;
-const int echoPin = 3;
+const int trigPin = 3;
+const int echoPin = 1;
 
 #define SOUND_SPEED 0.034
 long duration;
@@ -73,7 +70,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
-  myData.id = 3;
+  myData.id = 2;
   Serial.print("Board ID: ");
   Serial.println(myData.id);
 

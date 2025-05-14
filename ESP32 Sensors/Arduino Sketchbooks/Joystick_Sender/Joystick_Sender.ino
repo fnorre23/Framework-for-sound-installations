@@ -15,7 +15,7 @@
 #include <Arduino.h>
 
 // REPLACE WITH THE RECEIVER'S MAC Address
-uint8_t broadcastAddress[] = {0x7C, 0xDF, 0xA1, 0x55, 0xF8, 0x6A};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xB4};
 
 // Structure to send data
 typedef struct struct_message {
@@ -108,7 +108,7 @@ float readButton()
 }
 
 void loop() {
-  myData.id = 1;
+  myData.id = 12;
   myData.valueX = readSensorX();
   myData.valueY = readSensorY();
   myData.pressed = readButton();

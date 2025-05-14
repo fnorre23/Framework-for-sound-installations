@@ -7,7 +7,6 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-
 #include <esp_now.h>
 #include <WiFi.h>
 #include <Wire.h>
@@ -16,7 +15,7 @@
 #include "esp_adc_cal.h"
 
 // ESP-NOW MAC Address of receiver
-uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xCF, 0x10};
+uint8_t broadcastAddress[] = {0x48, 0xCA, 0x43, 0xB7, 0xD1, 0xB4};
 
 // BNO055 sensor instance
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);  // Default I2C address 0x28
